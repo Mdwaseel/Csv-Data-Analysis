@@ -46,6 +46,10 @@ def analyze():
     csvfile = session['csvfile']
     df = pd.read_csv(io.StringIO(csvfile))
     df_cleaned = df[[param1, param2]].dropna()
+    mean_value = df_cleaned[param2].mean()
+    median_value = df_cleaned[param2].median()
+    std_deviation = df_cleaned[param2].std()
+    
     chart_data = {
         'labels': df_cleaned[param1].tolist(),
         'datasets': [{
@@ -58,7 +62,10 @@ def analyze():
     }
     chart_data = json.dumps(chart_data)
     headers = list(df.columns)
-    return render_template('select.html', headers=headers, chart_data=chart_data)
+    return render_template('select.html', headers=headers, chart_data=chart_data,
+                           mean_value=mean_value, median_value=median_value, std_deviation=std_deviation)
+
+
 
 if __name__ == '__main__':
     app.run(debug=False,host='0.0.0.0')
