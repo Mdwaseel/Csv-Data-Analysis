@@ -7,8 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.static_folder = 'static' 
 
-# Sample user data for demonstration (replace with secure methods)
 users = {
     'Demo': generate_password_hash('1234'),
     'demo': generate_password_hash('1234')
@@ -50,12 +50,18 @@ def analyze():
     median_value = df_cleaned[param2].median()
     std_deviation = df_cleaned[param2].std()
     
+    num_data_points = len(df_cleaned)
+    bar_colors = [
+        f'rgba({i * 30 % 255}, {i * 50 % 255}, {i * 70 % 255}, 0.6)'
+        for i in range(num_data_points)
+    ]
+    
     chart_data = {
         'labels': df_cleaned[param1].tolist(),
         'datasets': [{
             'label': param2,
             'data': df_cleaned[param2].tolist(),
-            'backgroundColor': 'bg-blue-500 bg-opacity-50',
+            'backgroundColor': bar_colors,
             'borderColor': 'border-blue-500',
             'borderWidth': 1
         }]
@@ -64,8 +70,6 @@ def analyze():
     headers = list(df.columns)
     return render_template('select.html', headers=headers, chart_data=chart_data,
                            mean_value=mean_value, median_value=median_value, std_deviation=std_deviation)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
